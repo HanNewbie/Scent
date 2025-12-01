@@ -91,7 +91,7 @@ class ProductController extends Controller
         }
 
         if ($request->has('notes')) {
-        $data['notes'] = json_encode($request->notes);
+            $data['notes'] = $request->notes; // Laravel akan otomatis cast ke JSON
         }
 
         $product = Product::create($data);
@@ -104,7 +104,6 @@ class ProductController extends Controller
                 'price' => $request->variant_price[$index],
             ]);
         }
-
         return redirect()->back()->with('success', 'Produk dan varian berhasil disimpan.');
     }
 

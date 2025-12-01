@@ -46,14 +46,10 @@
     <!-- Product Grid -->
     <div class="p-3 max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
         @foreach ($products as $product)
-            <div class="bg-white rounded-2xl shadow-md overflow-visible relative transform transition duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
-                
-                <!-- Category -->
+            <div class="bg-white rounded-2xl shadow-md overflow-visible relative transform transition duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">                
                 <span class="absolute top-3 left-3 bg-amber-800 text-white px-4 py-1.5 rounded-full text-xs font-medium z-10 shadow-md">
                     {{ $product->category }}
                 </span>
-
-                <!-- Favorite Button -->
                 @php $isUser = Auth::guard('web')->check(); @endphp
                 @if ($isUser)
                     <form action="{{ route('user.favorites.toggle', $product->id) }}" method="POST"
@@ -70,10 +66,8 @@
                     </form>
                 @endif
 
-                <!-- Product Image -->
-                <div class="overflow-hidden">
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                        class="w-full h-56 object-cover transform transition duration-300 ease-in-out hover:scale-105">
+                <div class="rounded-2xl overflow-hidden">
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="rounded-2xl w-full h-56 object-cover transform transition duration-300 ease-in-out hover:scale-105">
                 </div>
 
                 <!-- Product Info -->
@@ -232,7 +226,7 @@
             <p class="text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
                 Tim ahli kami siap membantu Anda menemukan parfum yang sempurna sesuai kepribadian<br>dan preferensi Anda
             </p>
-            <a href="#"
+            <a href="{{ route('contact') }}"
                 class="inline-block bg-white text-[#8B5A3C] font-semibold px-8 py-4 rounded-full hover:bg-gray-100 transition duration-300 shadow-md">
                 Konsultasi dengan Ahli Kami
             </a>

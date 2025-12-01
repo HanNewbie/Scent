@@ -8,7 +8,7 @@ use App\Models\Favorite;
 use Illuminate\Support\Facades\Auth;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
-
+use Illuminate\Support\Facades\Hash;
 class DashboardController extends Controller
 {
     public function index()
@@ -55,25 +55,31 @@ class DashboardController extends Controller
         ));
     }
 
-
     public function update(Request $request)
     {
         $user = Auth::user();
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
             'pos' => 'nullable|string|max:10',
+            'new_password' => 'nullable|string|min:6|confirmed', // konfirmasi password tetap
         ]);
 
+        // Update data profil
         $user->update($request->only(['name', 'email', 'phone', 'address', 'city', 'pos']));
+
+        // Update password jika diisi
+        if ($request->filled('new_password')) {
+            $user->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+        }
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
-
-
 
 }

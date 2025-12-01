@@ -69,12 +69,12 @@
                         <p>{{ $favoriteCount }}</p>
                     </div>
                 </div>
-            </div>
+        </div>
 
         <div class="tab-menu">
-                <button class="active" id="btn-ringkasan">Ringkasan</button>
-                <button id="btn-pesanan">Pesanan</button>
-                <button id="btn-favorit">Favorit</button>
+            <button class="active" id="btn-ringkasan">Ringkasan</button>
+            <button id="btn-pesanan">Pesanan</button>
+            <button id="btn-favorit">Favorit</button>
         </div>
 
         {{-- Ringkasan 3 --}}
@@ -115,7 +115,8 @@
                         <div class="mb-2 space-y-2 leading-tight">
                             @foreach ($orderGroup as $item)
                                 <h4 class="order-product text-gray-700 font-medium text-sm m-0">
-                                    - {{ $item->product->name }} {{ $item->variant->variant_name }} {{ $item->quantity }}x
+                                    - {{ $item->product->name }} {{ $item->variant->variant_name }}
+                                    {{ $item->quantity }}x
                                 </h4>
                             @endforeach
                         </div>
@@ -161,7 +162,8 @@
                         };
                     @endphp
 
-                    <div class="order-item relative border rounded-lg p-5 mb-4 shadow-sm bg-white hover:shadow-md transition">
+                    <div
+                        class="order-item relative border rounded-lg p-5 mb-4 shadow-sm bg-white hover:shadow-md transition">
                         <div class="flex justify-between items-center mb-2">
                             <div class="flex items-center gap-2">
                                 <span class="order-id font-semibold text-gray-800">
@@ -176,7 +178,8 @@
                         <div class="mb-2 space-y-2 leading-tight">
                             @foreach ($orderGroup as $item)
                                 <h4 class="order-product text-gray-700 font-medium text-sm m-0">
-                                    - {{ $item->product->name }} {{ $item->variant->variant_name }} {{ $item->quantity }}x
+                                    - {{ $item->product->name }} {{ $item->variant->variant_name }}
+                                    {{ $item->quantity }}x
                                 </h4>
                             @endforeach
                         </div>
@@ -201,7 +204,7 @@
                 @endforelse
             </div>
         </div>
-        
+
         {{-- Favorit --}}
         <div id="section-favorit" class="hidden mx-4 sm:mx-10 lg:mx-[75px]">
             <h3 class="orders-title text-center mb-4">Produk Favorit Anda</h3>
@@ -242,8 +245,7 @@
                             </p>
                         </div>
 
-                        <form action="{{ route('user.favorites.remove', $product->id) }}"
-                            method="POST"
+                        <form action="{{ route('user.favorites.remove', $product->id) }}" method="POST"
                             class="absolute bottom-3 right-3 z-10">
                             @csrf
                             @method('DELETE')
@@ -260,18 +262,17 @@
             </div>
         </div>
 
-
+        {{-- Modal Edit Profil --}}
         <div x-show="open" x-cloak @click.self="open = false" x-transition.opacity
             class="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4">
             <div x-transition.scale
-                class="bg-white rounded-2xl shadow-xl w-full max-w-md p-4 relative transform transition-all"
-                style="max-height: fit-content;">
+                class="bg-white rounded-2xl shadow-xl w-full max-w-md p-4 relative transform transition-all max-h-[80vh] overflow-y-auto">
                 <h2 class="text-lg font-semibold text-amber-900 mb-3 text-center">Edit Profil</h2>
-
                 <form action="{{ route('user.profile.update') }}" method="POST" class="space-y-4">
                     @csrf
                     @method('PUT')
 
+                    <!-- Profil -->
                     <div class="border border-gray-200 rounded-lg p-3 hover:border-amber-500 transition">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                         <input type="text" name="name" value="{{ Auth::user()->name }}"
@@ -309,6 +310,21 @@
                         </div>
                     </div>
 
+                    <!-- Rubah Password -->
+                    <h3 class="text-md font-semibold text-amber-900 mt-4 mb-2">Ubah Password</h3>
+                    <div class="border border-gray-200 rounded-lg p-3 hover:border-amber-500 transition">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                        <input type="password" name="new_password" placeholder="Masukkan password baru"
+                            class="w-full border-gray-300 rounded-md focus:ring-amber-800 focus:border-amber-800">
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-3 hover:border-amber-500 transition">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
+                        <input type="password" name="new_password_confirmation" placeholder="Ulangi password baru"
+                            class="w-full border-gray-300 rounded-md focus:ring-amber-800 focus:border-amber-800">
+                    </div>
+
+                    <!-- Tombol -->
                     <div class="flex justify-end mt-4 space-x-3">
                         <button type="button" @click="open = false"
                             class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition">
@@ -321,54 +337,89 @@
                     </div>
                 </form>
 
+                <!-- Close -->
                 <button @click="open = false" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
         </div>
 
+
         <div class="mt-10">
             @include('layouts.footer')
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnRingkasan = document.getElementById('btn-ringkasan');
-            const btnPesanan = document.getElementById('btn-pesanan');
-            const btnFavorit = document.getElementById('btn-favorit');
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            const sectionRingkasan = document.getElementById('section-ringkasan');
-            const sectionPesanan = document.getElementById('section-pesanan');
-            const sectionFavorit = document.getElementById('section-favorit');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-            btnRingkasan.addEventListener('click', () => {
-                btnRingkasan.classList.add('active');
-                btnPesanan.classList.remove('active');
-                btnFavorit.classList.remove('active');
-                sectionRingkasan.style.display = 'block';
-                sectionPesanan.style.display = 'none';
-                sectionFavorit.style.display = 'none';
-            });
-
-            btnPesanan.addEventListener('click', () => {
-                btnRingkasan.classList.remove('active');
-                btnPesanan.classList.add('active');
-                btnFavorit.classList.remove('active');
-                sectionRingkasan.style.display = 'none';
-                sectionPesanan.style.display = 'block';
-                sectionFavorit.style.display = 'none';
-            });
-
-            btnFavorit.addEventListener('click', () => {
-                btnRingkasan.classList.remove('active');
-                btnPesanan.classList.remove('active');
-                btnFavorit.classList.add('active');
-                sectionRingkasan.style.display = 'none';
-                sectionPesanan.style.display = 'none';
-                sectionFavorit.style.display = 'block';
-            });
+    // ===== SWEET ALERT =====
+    @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: '{{ session('success') }}',
+            timer: 2000,
+            showConfirmButton: false
         });
-    </script>
+    @endif
+
+    @if ($errors->any())
+        let errorMessages = '';
+        @foreach ($errors->all() as $error)
+            errorMessages += '{{ $error }}\n';
+        @endforeach
+
+        if (errorMessages !== '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessages,
+            });
+        }
+    @endif
+
+    // ===== NAV TAB SWITCH =====
+    const btnRingkasan = document.getElementById('btn-ringkasan');
+    const btnPesanan = document.getElementById('btn-pesanan');
+    const btnFavorit = document.getElementById('btn-favorit');
+
+    const sectionRingkasan = document.getElementById('section-ringkasan');
+    const sectionPesanan = document.getElementById('section-pesanan');
+    const sectionFavorit = document.getElementById('section-favorit');
+
+    if(btnRingkasan && btnPesanan && btnFavorit) {
+        btnRingkasan.addEventListener('click', () => {
+            btnRingkasan.classList.add('active');
+            btnPesanan.classList.remove('active');
+            btnFavorit.classList.remove('active');
+            sectionRingkasan.style.display = 'block';
+            sectionPesanan.style.display = 'none';
+            sectionFavorit.style.display = 'none';
+        });
+
+        btnPesanan.addEventListener('click', () => {
+            btnRingkasan.classList.remove('active');
+            btnPesanan.classList.add('active');
+            btnFavorit.classList.remove('active');
+            sectionRingkasan.style.display = 'none';
+            sectionPesanan.style.display = 'block';
+            sectionFavorit.style.display = 'none';
+        });
+
+        btnFavorit.addEventListener('click', () => {
+            btnRingkasan.classList.remove('active');
+            btnPesanan.classList.remove('active');
+            btnFavorit.classList.add('active');
+            sectionRingkasan.style.display = 'none';
+            sectionPesanan.style.display = 'none';
+            sectionFavorit.style.display = 'block';
+        });
+    }
+});
+</script>
+
 
 @endsection
