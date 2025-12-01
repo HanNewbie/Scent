@@ -63,6 +63,7 @@ class CartController extends Controller
                 'message' => 'Produk berhasil ditambahkan ke keranjang!'
             ]);
         }
+        
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!')->withFragment('products');
     }
 

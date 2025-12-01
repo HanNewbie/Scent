@@ -19,7 +19,7 @@
 </head>
 
 <body class="bg-[#fbf7f2]"x-data="{ openVariantModal: false, selectedPrice: null }">
-    <section id="about" class="py-16 bg-[#fbf7f2]">
+    <section id="products" class="py-16 bg-[#fbf7f2]">
         <div class="max-w-7xl mx-auto px-4 text-center mb-10">
             <h2 class="text-2xl md:text-3xl font-semibold text-amber-800 mb-2">Koleksi Parfum Kami</h2>
             <div class="w-24 h-1 bg-gradient-to-r from-amber-700 to-yellow-300 mx-auto mb-4 rounded-full"></div>
