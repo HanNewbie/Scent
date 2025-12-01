@@ -1,0 +1,309 @@
+/* =========================
+   Navbar Umum
+========================= */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.5px;
+    z-index: 1000;
+    transition: background-color 0.4s, box-shadow 0.3s;
+}
+
+.navbar.transparent {
+    background-color: transparent;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+.navbar.scrolled {
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.logo a {
+    text-decoration: none;
+    color: #8B4513;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+/* Navbar Colors */
+.navbar.transparent .logo,
+.navbar.transparent .nav-links a,
+.navbar.transparent .cart-icon {
+    color: white;
+}
+
+.navbar.scrolled .logo,
+.navbar.scrolled .nav-links a,
+.navbar.scrolled .cart-icon {
+    color: #8B4513;
+}
+
+.nav-links a:hover,
+.cart-icon:hover {
+    color: #D2691E;
+}
+
+/* =========================
+   Login Button
+========================= */
+.navbar.scrolled .login-btn {
+    background-color: #a1532a;
+    color: #fff !important;
+    border: 2px solid #a1532a;
+    box-shadow: 0 4px 10px rgba(168,91,50,0.4);
+    padding: 8px 15px; 
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* =========================
+   Dropdown - Style Referensi
+========================= */
+.dropdown {
+    position: relative;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+.dropdown .login-link {
+    cursor: pointer;
+    user-select: none;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: #fff;
+    min-width: 220px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    padding: 8px 0;
+    z-index: 10000;
+}
+
+.dropdown.active .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li {
+    list-style: none;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    width: 100%;
+    font-size: 15px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    color: #000 !important;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f7f7f7;
+    color: #D2691E !important;
+}
+
+.dropdown-header {
+    font-weight: bold;
+    padding: 10px 16px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-menu .logout-btn {
+    color: #dc2626 !important;
+    font-weight: 600;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-menu .logout-btn:hover {
+    background-color: #fceaea;
+    color: #b91c1c !important;
+}
+
+/* =========================
+   Hamburger Menu
+========================= */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.hamburger span {
+    width: 28px;
+    height: 3px;
+    background-color: #8B4513;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+.navbar.scrolled .hamburger span {
+    background-color: #8B4513;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* =========================
+   Desktop/Mobile Toggle
+========================= */
+.nav-mobile {
+    display: none;
+}
+
+.nav-desktop {
+    display: flex;
+}
+
+/* =========================
+   RESPONSIVE - MOBILE
+========================= */
+@media (max-width: 768px) {
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        background-color: white;
+        width: 240px;  /* Diperkecil dari 280px */
+        max-width: 75%;  /* Diperkecil dari 85% */
+        flex-direction: column;
+        gap: 0;
+        padding: 15px 0;  /* Diperkecil dari 20px */
+        border-radius: 12px 0 0 12px;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.15);
+        transition: right 0.3s ease;
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
+        z-index: 999;
+        align-items: stretch;
+    }
+
+    .nav-links.open {
+        right: 0 !important;
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-links li a {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;  /* Diperkecil dari 10px */
+        padding: 12px 20px;  /* Diperkecil dari 15px 25px */
+        color: #3a1d0b !important;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;  /* Diperkecil dari 15px */
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-desktop {
+        display: none !important;
+    }
+
+    .nav-mobile {
+        display: block !important;
+    }
+
+    .nav-mobile a,
+    .nav-mobile button {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;  /* Diperkecil dari 10px */
+        padding: 12px 20px !important;  /* Diperkecil dari 15px 25px */
+        width: 100%;
+        font-weight: 600;
+        background: none;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;  /* Diperkecil dari 15px */
+        transition: background 0.2s;
+        color: #3a1d0b;
+    }
+
+    .nav-mobile button {
+        color: #dc2626 !important;
+    }
+
+    .nav-mobile a:hover,
+    .nav-mobile button:hover {
+        background-color: #f7f7f7;
+    }
+
+    /* Styling untuk icon di mobile menu */
+    .nav-mobile a i,
+    .nav-mobile button i {
+        font-size: 15px;  /* Diperkecil dari 16px */
+        width: 18px;  /* Diperkecil dari 20px */
+        text-align: center;
+    }
+}

@@ -1,0 +1,45 @@
+/* Custom styles for better mobile experience */
+@media (max-width: 640px) {
+
+    /* Prevent zoom on input focus in iOS */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important;
+        font-family: 'Playfair Display', serif !important;
+    }
+
+    /* Adjust container padding on small screens */
+    .login-container {
+        padding: 1.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+
+    /* Make back button more visible */
+    .back-button {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        backdrop-filter: blur(10px);
+        font-family: 'Playfair Display', serif;
+    }
+}
+
+/* Smooth transitions */
+* {
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'Playfair Display', serif;
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 640px) {
+
+    button,
+    a,
+    input[type="radio"]+label {
+        min-height: 44px;
+        font-family: 'Playfair Display', serif;
+    }
+}

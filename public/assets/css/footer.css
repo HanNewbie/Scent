@@ -1,0 +1,36 @@
+/* Font umum untuk seluruh footer */
+        footer {
+            font-family: 'Playfair Display', serif;
+        }
+
+        footer h4 {
+            font-weight: 600;
+        }
+
+        footer p, footer span, footer li {
+            font-weight: 400;
+        }
+
+        .footer-title {
+            font-size: 20px; 
+        }
+
+        .footer-subtitle {
+            font-size: 16px; 
+        }
+
+        .footer-text {
+            font-size: 14px; 
+        }
+
+        .footer-link {
+            font-size: 15px;
+        }
+
+        .social-icon i {
+            font-size: 18px;
+        }
+
+        .footer-link:hover {
+            color: #f59e0b; 
+        }

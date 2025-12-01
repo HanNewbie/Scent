@@ -1,0 +1,22 @@
+.product-card img {
+    height: 180px;      /* atur sesuai tinggi yang pas */
+    object-fit: cover;  /* crop gambar agar rapi */
+    width: 100%;
+    border-radius: 10px;
+}
+
+.product-card {
+    max-height: 320px;       /* atur sesuai kebutuhan */
+    overflow: hidden;        /* agar konten tidak melebar */
+}
+
+.product-card * {
+    text-align: left;
+}
+
+.product-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* tampilkan max 2 baris */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
