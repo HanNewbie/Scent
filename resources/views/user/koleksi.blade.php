@@ -17,135 +17,182 @@
 @endpush
 
 @section('content')
-<div x-data="{ 
-    openVariantModal: false, 
-    selectedPrice: null,
-    selectedProduct: null,
-    variants: []
-}">
+    <div x-data="{
+        openVariantModal: false,
+        selectedPrice: null,
+        selectedProduct: null,
+        variants: []
+    }">
 
-    <!-- Hero Section -->
-    <div class="relative h-[50vh] bg-gradient-to-b from-[#955530] to-[#b87333] text-white flex flex-col items-center justify-center text-center px-6 mt-9">
-        <a href="{{ route('landingpage') }}"
-            class="absolute top-12 left-6 flex items-center gap-2 text-white hover:underline font-semibold"
-            style="font-family: 'Playfair Display', serif;">
-            <i class="fa-solid fa-arrow-left"></i>
-            Kembali ke Beranda
-        </a>
+        <!-- Hero Section -->
+        <div
+            class="relative h-[50vh] bg-gradient-to-b from-[#955530] to-[#b87333] text-white flex flex-col items-center justify-center text-center px-6 mt-9">
+            <a href="{{ route('landingpage') }}"
+                class="absolute top-12 left-6 flex items-center gap-2 text-white hover:underline font-semibold"
+                style="font-family: 'Playfair Display', serif;">
+                <i class="fa-solid fa-arrow-left"></i>
+                Kembali ke Beranda
+            </a>
 
-        <div class="max-w-3xl" data-aos="fade-up" data-aos-duration="900">
-            <h1 class="text-2xl font-semibold mb-4" style="font-family: 'Playfair Display', serif;">Koleksi Premium Kami</h1>
-            <div class="w-24 h-[2px] mx-auto bg-gradient-to-r from-transparent via-yellow-200 to-transparent mb-6"></div>
-            <p class="text-lg leading-relaxed text-[#f4e4d0]" style="font-family: 'Playfair Display', serif;">
-                Jelajahi koleksi parfum designer terbaik dari brand-brand ternama dunia.
-                Setiap aroma dipilih khusus untuk memberikan pengalaman wangi yang tak terlupakan.
-            </p>
+            <div class="max-w-3xl" data-aos="fade-up" data-aos-duration="900">
+                <h1 class="text-2xl font-semibold mb-4" style="font-family: 'Playfair Display', serif;">Koleksi Premium Kami
+                </h1>
+                <div class="w-24 h-[2px] mx-auto bg-gradient-to-r from-transparent via-yellow-200 to-transparent mb-6">
+                </div>
+                <p class="text-lg leading-relaxed text-[#f4e4d0]" style="font-family: 'Playfair Display', serif;">
+                    Jelajahi koleksi parfum designer terbaik dari brand-brand ternama dunia.
+                    Setiap aroma dipilih khusus untuk memberikan pengalaman wangi yang tak terlupakan.
+                </p>
+            </div>
         </div>
-    </div>
 
-    <!-- Product Grid -->
-    <div class="p-3 max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
-        @foreach ($products as $product)
-            <div class="bg-white rounded-2xl shadow-md overflow-visible relative transform transition duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">                
-                <span class="absolute top-3 left-3 bg-amber-800 text-white px-4 py-1.5 rounded-full text-xs font-medium z-10 shadow-md">
-                    {{ $product->category }}
-                </span>
-                @php $isUser = Auth::guard('web')->check(); @endphp
-                @if ($isUser)
-                    <form action="{{ route('user.favorites.toggle', $product->id) }}" method="POST"
-                        class="absolute top-3 right-3 z-10">
-                        @csrf
-                        <button type="submit"
-                            class="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition duration-200">
-                            @if (auth()->user()->favorites->contains('product_id', $product->id))
-                                <i class="fa fa-heart text-red-500 text-lg"></i>
-                            @else
-                                <i class="fa fa-heart text-gray-400 text-lg hover:text-red-500"></i>
-                            @endif
-                        </button>
-                    </form>
-                @endif
+        <!-- Search & Filter -->
+        <div class="max-w-7xl mx-auto px-4 mt-8" style="font-family: 'Inter', sans-serif;">
+            <form method="GET" action="{{ route('koleksi') }}"
+                class="bg-white rounded-2xl shadow-md p-4 flex flex-col sm:flex-row gap-3 items-center">
 
-                <div class="rounded-2xl overflow-hidden">
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="rounded-2xl w-full h-56 object-cover transform transition duration-300 ease-in-out hover:scale-105">
+                <!-- Search Input -->
+                <div class="relative w-full sm:flex-1">
+                    <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-amber-700"></i>
+                    <input type="text" name="search" placeholder="Cari notes parfum (vanilla, woody, floral...)"
+                        value="{{ request('search') }}"
+                        class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-700 focus:border-amber-700 outline-none transition">
                 </div>
 
-                <!-- Product Info -->
-                <div class="p-4">
-                    <p class="text-yellow-500 text-sm font-semibold mb-1 uppercase tracking-wide font-playfair">
-                        {{ $product->brand }}
-                    </p>
-                    <h3 class="text-lg font-semibold text-amber-900 mb-3 font-playfair">
-                        {{ $product->name }}
-                    </h3>
+                <!-- Category Filter -->
+                <div class="relative w-full sm:w-56">
+                    <i class="fa fa-layer-group absolute left-4 top-1/2 -translate-y-1/2 text-amber-700"></i>
+                    <select name="category"
+                        class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-700 focus:border-amber-700 outline-none transition appearance-none bg-white">
+                        <option value="">Semua Kategori</option>
 
-                    <!-- Notes -->
-                    <div class="mb-2 font-inter">
-                        <p class="text-xs text-gray-600">
-                            <span class="font-semibold text-amber-800">Top Notes:</span>
-                            <span class="text-gray-700">{{ implode(', ', $product->notes['top_notes'] ?? []) }}</span>
-                        </p>
-                    </div>
-                    <div class="mb-2 font-inter">
-                        <p class="text-xs text-gray-600">
-                            <span class="font-semibold text-amber-800">Heart Notes:</span>
-                            <span class="text-gray-700">{{ implode(', ', $product->notes['heart_notes'] ?? []) }}</span>
-                        </p>
-                    </div>
-                    <div class="mb-4 font-inter">
-                        <p class="text-xs text-gray-600">
-                            <span class="font-semibold text-amber-800">Base Notes:</span>
-                            <span class="text-gray-700">{{ implode(', ', $product->notes['base_notes'] ?? []) }}</span>
-                        </p>
-                    </div>
-
-                    <!-- Variants (compact display) -->
-                    <div class="space-y-2 font-inter mb-4">
-                        @foreach ($product->variants as $variant)
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 text-sm font-medium">{{ $variant->variant_name }}</span>
-                                <p class="text-amber-900 font-bold text-lg">
-                                    Rp {{ number_format($variant->price, 0, ',', '.') }}
-                                </p>
-                            </div>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                {{ ucfirst($category) }}
+                            </option>
                         @endforeach
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full sm:w-auto bg-amber-800 hover:bg-amber-700 text-white font-semibold px-6 py-3 rounded-xl transition shadow-md hover:shadow-lg">
+                    Cari Koleksi
+                </button>
+
+            </form>
+        </div>
+
+
+
+
+        <!-- Product Grid -->
+        <div class="p-3 max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
+            @foreach ($products as $product)
+                <div
+                    class="bg-white rounded-2xl shadow-md overflow-visible relative transform transition duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                    <span
+                        class="absolute top-3 left-3 bg-amber-800 text-white px-4 py-1.5 rounded-full text-xs font-medium z-10 shadow-md">
+                        {{ $product->category }}
+                    </span>
+                    @php $isUser = Auth::guard('web')->check(); @endphp
+                    @if ($isUser)
+                        <form action="{{ route('user.favorites.toggle', $product->id) }}" method="POST"
+                            class="absolute top-3 right-3 z-10">
+                            @csrf
+                            <button type="submit"
+                                class="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition duration-200">
+                                @if (auth()->user()->favorites->contains('product_id', $product->id))
+                                    <i class="fa fa-heart text-red-500 text-lg"></i>
+                                @else
+                                    <i class="fa fa-heart text-gray-400 text-lg hover:text-red-500"></i>
+                                @endif
+                            </button>
+                        </form>
+                    @endif
+
+                    <div class="rounded-2xl overflow-hidden">
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                            class="rounded-2xl w-full h-56 object-cover transform transition duration-300 ease-in-out hover:scale-105">
                     </div>
 
-                    <!-- Add to Cart Button -->
-                    @php
-                        $isUser = Auth::guard('web')->check();
-                        $isAdmin = Auth::guard('admin')->check();
-                    @endphp
+                    <!-- Product Info -->
+                    <div class="p-4">
+                        <p class="text-yellow-500 text-sm font-semibold mb-1 uppercase tracking-wide font-playfair">
+                            {{ $product->brand }}
+                        </p>
+                        <h3 class="text-lg font-semibold text-amber-900 mb-3 font-playfair">
+                            {{ $product->name }}
+                        </h3>
 
-                    @if ($isUser && !$isAdmin)
-                        <button type="button" 
-                            @click="
+                        <!-- Notes -->
+                        <div class="mb-2 font-inter">
+                            <p class="text-xs text-gray-600">
+                                <span class="font-semibold text-amber-800">Top Notes:</span>
+                                <span class="text-gray-700">{{ implode(', ', $product->notes['top_notes'] ?? []) }}</span>
+                            </p>
+                        </div>
+                        <div class="mb-2 font-inter">
+                            <p class="text-xs text-gray-600">
+                                <span class="font-semibold text-amber-800">Heart Notes:</span>
+                                <span
+                                    class="text-gray-700">{{ implode(', ', $product->notes['heart_notes'] ?? []) }}</span>
+                            </p>
+                        </div>
+                        <div class="mb-4 font-inter">
+                            <p class="text-xs text-gray-600">
+                                <span class="font-semibold text-amber-800">Base Notes:</span>
+                                <span class="text-gray-700">{{ implode(', ', $product->notes['base_notes'] ?? []) }}</span>
+                            </p>
+                        </div>
+
+                        <!-- Variants (compact display) -->
+                        <div class="space-y-2 font-inter mb-4">
+                            @foreach ($product->variants as $variant)
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600 text-sm font-medium">{{ $variant->variant_name }}</span>
+                                    <p class="text-amber-900 font-bold text-lg">
+                                        Rp {{ number_format($variant->price, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Add to Cart Button -->
+                        @php
+                            $isUser = Auth::guard('web')->check();
+                            $isAdmin = Auth::guard('admin')->check();
+                        @endphp
+
+                        @if ($isUser && !$isAdmin)
+                            <button type="button"
+                                @click="
                                 selectedProduct = {{ $product->id }};
                                 variants = {{ $product->variants->toJson() }};
                                 openVariantModal = true;
                                 selectedPrice = null;
                             "
-                            class="w-full bg-amber-800 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded-lg transition mt-4
+                                class="w-full bg-amber-800 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded-lg transition mt-4
                             {{ $product->display_stok <= 0 ? 'opacity-50 cursor-not-allowed hover:bg-amber-800' : '' }}"
-                            {{ $product->display_stok <= 0 ? 'disabled' : '' }}>
-                            <i class="fa fa-cart-plus"></i>
-                            Tambahkan ke Keranjang
-                        </button>
-                    @elseif(!$isUser && !$isAdmin)
-                        <a href="{{ route('login') }}">
-                            <button type="button"
-                                class="w-full bg-amber-800 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 mt-4
-                                {{ $product->display_stok <= 0 ? 'opacity-50 cursor-not-allowed hover:bg-amber-800' : '' }}"
                                 {{ $product->display_stok <= 0 ? 'disabled' : '' }}>
                                 <i class="fa fa-cart-plus"></i>
                                 Tambahkan ke Keranjang
                             </button>
-                        </a>
-                    @endif
+                        @elseif(!$isUser && !$isAdmin)
+                            <a href="{{ route('login') }}">
+                                <button type="button"
+                                    class="w-full bg-amber-800 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 mt-4
+                                {{ $product->display_stok <= 0 ? 'opacity-50 cursor-not-allowed hover:bg-amber-800' : '' }}"
+                                    {{ $product->display_stok <= 0 ? 'disabled' : '' }}>
+                                    <i class="fa fa-cart-plus"></i>
+                                    Tambahkan ke Keranjang
+                                </button>
+                            </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
 
         @isset($product)
             <div x-show="openVariantModal" x-cloak
@@ -219,26 +266,27 @@
             </div>
         @endisset
 
-    <div class="max-w-7xl mx-auto px-4 mt-10 mb-10" data-aos="fade-up" data-aos-duration="900">
-        <div class="bg-gradient-to-r from-[#8B5A3C] via-[#A0613C] to-[#8B5A3C] rounded-3xl shadow-lg p-12 text-center text-white"
-            style="font-family: 'Playfair Display', serif;">
-            <h2 class="text-3xl font-semibold mb-4">Butuh Bantuan Memilih?</h2>
-            <p class="text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
-                Tim ahli kami siap membantu Anda menemukan parfum yang sempurna sesuai kepribadian<br>dan preferensi Anda
-            </p>
-            <a href="{{ route('contact') }}"
-                class="inline-block bg-white text-[#8B5A3C] font-semibold px-8 py-4 rounded-full hover:bg-gray-100 transition duration-300 shadow-md">
-                Konsultasi dengan Ahli Kami
-            </a>
+        <div class="max-w-7xl mx-auto px-4 mt-10 mb-10" data-aos="fade-up" data-aos-duration="900">
+            <div class="bg-gradient-to-r from-[#8B5A3C] via-[#A0613C] to-[#8B5A3C] rounded-3xl shadow-lg p-12 text-center text-white"
+                style="font-family: 'Playfair Display', serif;">
+                <h2 class="text-3xl font-semibold mb-4">Butuh Bantuan Memilih?</h2>
+                <p class="text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
+                    Tim ahli kami siap membantu Anda menemukan parfum yang sempurna sesuai kepribadian<br>dan preferensi
+                    Anda
+                </p>
+                <a href="{{ route('contact') }}"
+                    class="inline-block bg-white text-[#8B5A3C] font-semibold px-8 py-4 rounded-full hover:bg-gray-100 transition duration-300 shadow-md">
+                    Konsultasi dengan Ahli Kami
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-10">
+            @include('layouts.footer')
         </div>
     </div>
 
-    <div class="mt-10">
-        @include('layouts.footer')
-    </div>
-</div>
-
- <script>
+    <script>
         const forms = document.querySelectorAll('.add-to-cart-form');
         const container = document.getElementById('notification-container');
 
