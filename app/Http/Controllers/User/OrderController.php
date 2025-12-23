@@ -69,7 +69,6 @@ class OrderController extends Controller
         ]);
 
         foreach ($cartItems as $item) {
-            // Buat OrderItem
             OrderItem::create([
                 'order_id'     => $order->id,
                 'product_id'   => $item->product_id,
@@ -79,7 +78,6 @@ class OrderController extends Controller
                 'total_amount' => $item->price * $item->quantity,
             ]);
 
-            // Kurangi stok variant atau produk
             if ($item->variant) {
                 $item->variant->stok -= $item->quantity;
                 $item->variant->save();
@@ -89,10 +87,8 @@ class OrderController extends Controller
             }
         }
 
-        // Kosongkan keranjang
         Cart::where('user_id', $user->id)->delete();
 
-        // Buat list produk untuk WA
         $productList = $cartItems->map(function ($item) {
             $variantName = $item->variant ? "({$item->variant->variant_name})" : "";
             return "- {$item->product->name} {$variantName} {$item->quantity}";
@@ -114,7 +110,7 @@ class OrderController extends Controller
     {
         $order = Order::with(['items.product'])
                     ->where('id', $id)
-                    ->where('user_id', Auth::id()) // keamanan
+                    ->where('user_id', Auth::id()) 
                     ->firstOrFail();
 
         return view('user.detail', compact('order'));

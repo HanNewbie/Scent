@@ -29,12 +29,12 @@ class CollectController extends Controller
             $query->where(function ($q) use ($keyword) {
                 $q->whereRaw("LOWER(JSON_EXTRACT(notes, '$.top_notes')) LIKE ?", ["%{$keyword}%"])
                 ->orWhereRaw("LOWER(JSON_EXTRACT(notes, '$.heart_notes')) LIKE ?", ["%{$keyword}%"])
-                ->orWhereRaw("LOWER(JSON_EXTRACT(notes, '$.base_notes')) LIKE ?", ["%{$keyword}%"]);
+                ->orWhereRaw("LOWER(JSON_EXTRACT(notes, '$.base_notes')) LIKE ?", ["%{$keyword}%"])
+                ->orWhereRaw("LOWER(name) LIKE ?", ["%{$keyword}%"]);
             });
         }
 
-        $products = $query->paginate(24)
-                        ->appends($request->query());
+        $products = $query->paginate(24)->appends($request->query());
 
         $products->getCollection()->transform(function ($product) {
             $availableVariant = $product->variants
@@ -43,7 +43,6 @@ class CollectController extends Controller
                 ->first();
 
             $cheapestVariant = $availableVariant ?? $product->variants->first();
-
             $product->display_price    = $cheapestVariant->price ?? 0;
             $product->display_stok     = $cheapestVariant->stok ?? 0;
             $product->display_variant  = $cheapestVariant;

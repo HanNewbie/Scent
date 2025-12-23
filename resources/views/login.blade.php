@@ -102,16 +102,10 @@
                     </div>
                 </div>
 
-                <!-- Remember & Forgot Password -->
                 <div class="flex items-center justify-between text-xs sm:text-sm flex-wrap gap-2">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" name="remember" class="rounded text-amber-700 focus:ring-amber-700 w-4 h-4">
-                        <span>Ingat saya</span>
-                    </label>
-                    <a href="#" class="text-amber-700 hover:text-amber-600 whitespace-nowrap">Lupa password?</a>
+                    <a href="{{ route('forgot.password') }}" class="text-amber-700 hover:text-amber-600 whitespace-nowrap">Lupa password?</a>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit"
                     class="w-full py-3 sm:py-2.5 rounded-lg shadow-sm text-sm sm:text-base font-medium text-white bg-amber-800 hover:bg-amber-700 
                     active:bg-amber-900 transition duration-200 min-h-[44px]">
@@ -133,7 +127,6 @@
                 @endif
             </form>
 
-            <!-- Social Login Divider -->
             <div class="space-y-3">
                 <div class="relative">
                     <div class="absolute inset-0 flex items-center">
@@ -144,7 +137,6 @@
                     </div>
                 </div>
 
-                <!-- Google Login -->
                 <a href="{{ route('google.login') }}"
                     class="flex items-center justify-center w-full py-2.5 sm:py-2 px-4 border border-gray-300 rounded-lg shadow-sm 
                     text-sm sm:text-base font-medium text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 
@@ -154,7 +146,6 @@
                 </a>
             </div>
 
-            <!-- Register Link -->
             <div class="text-center text-xs sm:text-sm text-gray-600 pt-2">
                 Belum punya akun? 
                 <a href="{{route('register')}}" class="font-medium text-amber-700 hover:text-amber-600 underline">
@@ -163,7 +154,6 @@
             </div>
         </div>
 
-        <!-- Terms & Privacy -->
         <p class="text-center text-xs text-gray-500 mt-4 sm:mt-6 max-w-sm px-4">
             Dengan masuk, Anda menyetujui
             <a href="#" class="text-amber-700 hover:underline">Syarat & Ketentuan</a> dan
@@ -172,7 +162,6 @@
     </div>
 
     <script>
-        // Toggle password visibility
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.querySelector('.fa-eye');
@@ -188,7 +177,6 @@
             }
         }
 
-        // Prevent iOS zoom on input focus
         document.addEventListener('DOMContentLoaded', function() {
             if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 const inputs = document.querySelectorAll('input');

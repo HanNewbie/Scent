@@ -15,16 +15,13 @@ class LandingPageController extends Controller
             }])
             ->paginate(24);
 
-        // proses setiap produk
         $products->getCollection()->transform(function ($product) {
 
-            // ambil varian yang stok > 0 dan paling murah
             $availableVariant = $product->variants
                 ->where('stok', '>', 0)
                 ->sortBy('price')
                 ->first();
 
-            // jika tidak ada stok, ambil varian termurah
             $cheapestVariant = $availableVariant ?? $product->variants->first();
 
             $product->display_price  = $cheapestVariant->price ?? 0;

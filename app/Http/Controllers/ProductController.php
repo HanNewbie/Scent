@@ -91,7 +91,7 @@ class ProductController extends Controller
         }
 
         if ($request->has('notes')) {
-            $data['notes'] = $request->notes; // Laravel akan otomatis cast ke JSON
+            $data['notes'] = $request->notes;
         }
 
         $product = Product::create($data);
@@ -117,8 +117,7 @@ class ProductController extends Controller
             'image'      => 'nullable|mimes:jpg,jpeg,png|max:5048',
             'SKU'        => 'nullable|string|unique:products,SKU,' . $id,
             'category'   => 'nullable|string',
-
-            // varian optional
+            
             'variant_name' => 'nullable|array',
             'variant_name.*' => 'nullable|string',
 

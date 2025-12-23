@@ -272,7 +272,6 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Profil -->
                     <div class="border border-gray-200 rounded-lg p-3 hover:border-amber-500 transition">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                         <input type="text" name="name" value="{{ Auth::user()->name }}"
@@ -310,19 +309,36 @@
                         </div>
                     </div>
 
-                    <!-- Rubah Password -->
                     <h3 class="text-md font-semibold text-amber-900 mt-4 mb-2">Ubah Password</h3>
                     <div class="border border-gray-200 rounded-lg p-3 hover:border-amber-500 transition">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-                        <input type="password" name="new_password" placeholder="Masukkan password baru"
-                            class="w-full border-gray-300 rounded-md focus:ring-amber-800 focus:border-amber-800">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Sekarang</label>
+                        <div class="relative">
+                            <input type="password" id="current_password" name="current_password" placeholder="Masukkan password sekarang"
+                                class="w-full border-gray-300 rounded-md focus:ring-amber-800 focus:border-amber-800 pr-10">
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                                data-toggle="password" data-target="current_password" aria-label="Tampilkan password saat ini">
+                                <i class="fa fa-eye text-sm"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="border border-gray-200 rounded-lg p-3 hover:border-amber-500 transition">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
-                        <input type="password" name="new_password_confirmation" placeholder="Ulangi password baru"
-                            class="w-full border-gray-300 rounded-md focus:ring-amber-800 focus:border-amber-800">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                        <div class="relative">
+                            <input type="password" id="new_password" name="new_password" placeholder="Masukkan password baru"
+                                class="w-full border-gray-300 rounded-md focus:ring-amber-800 focus:border-amber-800 pr-10">
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                                data-toggle="password" data-target="new_password" aria-label="Tampilkan password baru">
+                                <i class="fa fa-eye text-sm"></i>
+                            </button>
+                        </div>
                     </div>
+                    <p class="text-sm text-gray-600 text-right">
+                        Lupa password?
+                        <a href="{{ route('forgot.password') }}" class="text-amber-800 hover:underline">
+                            Reset di sini
+                        </a>
+                    </p>
 
                     <!-- Tombol -->
                     <div class="flex justify-end mt-4 space-x-3">
@@ -387,10 +403,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnFavorit = document.getElementById('btn-favorit');
 
     const sectionRingkasan = document.getElementById('section-ringkasan');
-    const sectionPesanan = document.getElementById('section-pesanan');
-    const sectionFavorit = document.getElementById('section-favorit');
+            const sectionPesanan = document.getElementById('section-pesanan');
+            const sectionFavorit = document.getElementById('section-favorit');
 
-    if(btnRingkasan && btnPesanan && btnFavorit) {
+            if(btnRingkasan && btnPesanan && btnFavorit) {
         btnRingkasan.addEventListener('click', () => {
             btnRingkasan.classList.add('active');
             btnPesanan.classList.remove('active');
@@ -409,17 +425,31 @@ document.addEventListener('DOMContentLoaded', function() {
             sectionFavorit.style.display = 'none';
         });
 
-        btnFavorit.addEventListener('click', () => {
-            btnRingkasan.classList.remove('active');
-            btnPesanan.classList.remove('active');
-            btnFavorit.classList.add('active');
-            sectionRingkasan.style.display = 'none';
-            sectionPesanan.style.display = 'none';
-            sectionFavorit.style.display = 'block';
+                btnFavorit.addEventListener('click', () => {
+                    btnRingkasan.classList.remove('active');
+                    btnPesanan.classList.remove('active');
+                    btnFavorit.classList.add('active');
+                    sectionRingkasan.style.display = 'none';
+                    sectionPesanan.style.display = 'none';
+                    sectionFavorit.style.display = 'block';
+                });
+            }
+
+            // Toggle password visibility in modal
+            document.querySelectorAll('[data-toggle="password"]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    const icon = button.querySelector('i');
+                    const isHidden = input.type === 'password';
+
+                    input.type = isHidden ? 'text' : 'password';
+                    icon.classList.toggle('fa-eye', !isHidden);
+                    icon.classList.toggle('fa-eye-slash', isHidden);
+                });
+            });
         });
-    }
-});
-</script>
+    </script>
 
 
 @endsection

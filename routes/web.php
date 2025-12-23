@@ -13,14 +13,20 @@ use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\Auth\GoogleController;
 
-Route::get('/', [LandingPageController::class, 'index'])->name('landingpage');
+use App\Http\Controllers\Auth\ForgotController;
+use App\Http\Controllers\Auth\ResetController;
 
+Route::get('/', [LandingPageController::class, 'index'])->name('landingpage');
 
 Route::get('/login', [LoginController::class, 'loginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::get('/register', [LoginController::class, 'registerForm'])->name('register');
 Route::post('/register', [LoginController::class, 'register'])->name('register.submit');
 
+Route::get('/forgot-password', [ForgotController::class, 'showForm'])->name('forgot.password');
+Route::post('/forgot-password', [ForgotController::class, 'sendResetLink'])->name('forgot.password.post');
+Route::get('/reset-password/{token}', [ResetController::class, 'showForm'])->name('reset.password');
+Route::post('/reset-password', [ResetController::class, 'reset'])->name('reset.password.post');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

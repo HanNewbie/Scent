@@ -14,17 +14,14 @@ class FavoriteController extends Controller
     {
         $user = auth()->user();
 
-        // Cek apakah sudah difavoritkan
         $favorite = Favorite::where('user_id', $user->id)
             ->where('product_id', $product->id)
             ->first();
 
         if ($favorite) {
-            // Jika sudah ada, hapus dari favorit
             $favorite->delete();
             $message = 'Produk dihapus dari favorit.';
         } else {
-            // Jika belum ada, tambahkan ke favorit
             Favorite::create([
                 'user_id' => $user->id,
                 'product_id' => $product->id,

@@ -66,14 +66,17 @@ class DashboardController extends Controller
             'address' => 'nullable|string',
             'city' => 'nullable|string',
             'pos' => 'nullable|string|max:10',
-            'new_password' => 'nullable|string|min:6|confirmed', // konfirmasi password tetap
+            'current_password' => 'required_with:new_password|string',
+            'new_password' => 'nullable|string|min:6',
         ]);
 
-        // Update data profil
         $user->update($request->only(['name', 'email', 'phone', 'address', 'city', 'pos']));
 
-        // Update password jika diisi
         if ($request->filled('new_password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Password sekarang tidak sesuai.']);
+            }
+
             $user->update([
                 'password' => Hash::make($request->new_password),
             ]);
