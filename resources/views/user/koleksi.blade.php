@@ -17,12 +17,29 @@
 @endpush
 
 @section('content')
-    <div x-data="{
-        openVariantModal: false,
-        selectedPrice: null,
-        selectedProduct: null,
-        variants: []
-    }">
+    @php
+        $productData = $products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'image' => asset('storage/' . $p->image),
+                'brand' => $p->brand,
+                'category' => $p->category,
+                'display_price' => $p->display_price,
+                'display_stok' => $p->display_stok,
+                'action' => route('user.cart.add', $p->id),
+                'variants' => $p->variants->map(function ($v) {
+                    return [
+                        'id' => $v->id,
+                        'variant_name' => $v->variant_name,
+                        'price' => $v->price,
+                        'stok' => $v->stok,
+                    ];
+                })->values(),
+            ];
+        });
+    @endphp
+    <div x-data="productModal({{ $productData->toJson() }})">
 
         <!-- Hero Section -->
         <div
@@ -165,13 +182,7 @@
                         @endphp
 
                         @if ($isUser && !$isAdmin)
-                            <button type="button"
-                                @click="
-                                selectedProduct = {{ $product->id }};
-                                variants = {{ $product->variants->toJson() }};
-                                openVariantModal = true;
-                                selectedPrice = null;
-                            "
+                            <button type="button" @click="openProduct({{ $product->id }})"
                                 class="w-full bg-amber-800 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded-lg transition mt-4
                             {{ $product->display_stok <= 0 ? 'opacity-50 cursor-not-allowed hover:bg-amber-800' : '' }}"
                                 {{ $product->display_stok <= 0 ? 'disabled' : '' }}>
@@ -194,54 +205,52 @@
             @endforeach
         </div>
 
-        @isset($product)
+        @php
+            $isUser = Auth::guard('web')->check();
+            $isAdmin = Auth::guard('admin')->check();
+        @endphp
+        @if ($isUser && !$isAdmin)
             <div x-show="openVariantModal" x-cloak
                 class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-                style="font-family: 'Inter', sans-serif;">
+                style="font-family: 'Inter', sans-serif;" @click.self="closeModal()">
 
                 <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 relative font-inter">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Pilih Varian</h2>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800" x-text="selectedProduct?.name || 'Pilih Varian'"></h2>
 
-                    <form method="POST" action="{{ route('user.cart.add', $product->id) }}">
+                    <form method="POST" :action="selectedProduct?.action || ''">
                         @csrf
 
-                        @if ($product->variants->count())
+                        <template x-if="selectedProduct && selectedProduct.variants.length">
                             <div class="grid grid-cols-2 gap-4">
-                                @foreach ($product->variants as $variant)
+                                <template x-for="variant in selectedProduct.variants" :key="variant.id">
                                     <label
-                                        class="border rounded-xl p-4 transition flex flex-col gap-1
-                                        {{ $variant->stok == 0 ? 'bg-gray-100 opacity-60 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50' }}">
+                                        class="border rounded-xl p-4 transition flex flex-col gap-1"
+                                        :class="variant.stok === 0 ? 'bg-gray-100 opacity-60 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'">
 
-                                        <input type="radio" name="variant_id" value="{{ $variant->id }}"
+                                        <input type="radio" name="variant_id" :value="variant.id"
                                             class="accent-amber-700 w-4 h-4 mb-1"
-                                            @click="selectedPrice = {{ $variant->price }}"
-                                            {{ $variant->stok == 0 ? 'disabled' : '' }} required>
+                                            x-model="selectedVariant"
+                                            @change="selectPrice(variant.price)"
+                                            :disabled="variant.stok === 0" required>
 
-                                        <p class="font-semibold text-gray-800 text-sm">
-                                            {{ $variant->variant_name }}
-                                        </p>
+                                        <p class="font-semibold text-gray-800 text-sm" x-text="variant.variant_name"></p>
 
                                         <p class="text-xs text-gray-500">
-                                            @if ($variant->stok > 0)
-                                                Stok: {{ $variant->stok }}
-                                            @else
-                                                <span class="text-red-600 font-semibold">Habis</span>
-                                            @endif
+                                            <span x-show="variant.stok > 0" x-text="'Stok: ' + variant.stok"></span>
+                                            <span x-show="variant.stok === 0" class="text-red-600 font-semibold">Habis</span>
                                         </p>
 
-                                        <p
-                                            class="text-sm font-semibold mt-1
-                                            {{ $variant->stok == 0 ? 'text-gray-400' : 'text-amber-700' }}">
-                                            Rp {{ number_format($variant->price, 0, ',', '.') }}
-                                        </p>
+                                        <p class="text-sm font-semibold mt-1"
+                                            :class="variant.stok === 0 ? 'text-gray-400' : 'text-amber-700'"
+                                            x-text="'Rp ' + Number(variant.price).toLocaleString('id-ID')"></p>
                                     </label>
-                                @endforeach
+                                </template>
                             </div>
-                        @else
-                            <p class="text-center text-gray-500">
-                                Varian produk belum tersedia
-                            </p>
-                        @endif
+                        </template>
+
+                        <p class="text-center text-gray-500" x-show="selectedProduct && !selectedProduct.variants.length">
+                            Varian produk belum tersedia
+                        </p>
 
                         <div class="mt-5" x-show="selectedPrice">
                             <p class="text-lg font-semibold text-amber-700">
@@ -251,7 +260,7 @@
                         </div>
 
                         <div class="flex justify-end mt-6 gap-3">
-                            <button type="button" @click="openVariantModal = false"
+                            <button type="button" @click="closeModal()"
                                 class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
                                 Batal
                             </button>
@@ -264,7 +273,7 @@
                     </form>
                 </div>
             </div>
-        @endisset
+        @endif
 
         <div class="max-w-7xl mx-auto px-4 mt-10 mb-10" data-aos="fade-up" data-aos-duration="900">
             <div class="bg-gradient-to-r from-[#8B5A3C] via-[#A0613C] to-[#8B5A3C] rounded-3xl shadow-lg p-12 text-center text-white"
@@ -287,56 +296,33 @@
     </div>
 
     <script>
-        const forms = document.querySelectorAll('.add-to-cart-form');
-        const container = document.getElementById('notification-container');
-
-        forms.forEach(form => {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const url = form.action;
-                const token = form.querySelector('input[name="_token"]').value;
-
-                try {
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    });
-
-                    const data = await res.json();
-                    showNotification(data.message, data.status);
-
-                } catch (error) {
-                    showNotification('Terjadi kesalahan!', 'error');
+        function productModal(products) {
+            return {
+                openVariantModal: false,
+                selectedPrice: null,
+                selectedProduct: null,
+                selectedVariant: null,
+                products: products,
+                openProduct(id) {
+                    const product = this.products.find(p => p.id === id);
+                    if (product) {
+                        this.selectedProduct = product;
+                        const available = product.variants.find(v => Number(v.stok) > 0);
+                        this.selectedVariant = available ? available.id : null;
+                        this.selectedPrice = available ? Number(available.price) : null;
+                        this.openVariantModal = true;
+                    }
+                },
+                selectPrice(price) {
+                    this.selectedPrice = Number(price);
+                },
+                closeModal() {
+                    this.openVariantModal = false;
+                    this.selectedProduct = null;
+                    this.selectedPrice = null;
+                    this.selectedVariant = null;
                 }
-            });
-        });
-
-        function showNotification(message, type = 'success') {
-            const notif = document.createElement('div');
-            notif.innerHTML = message;
-            notif.className = `
-        px-4 py-3 rounded-lg shadow-md text-white font-medium
-        ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}
-        transform transition-all duration-300 ease-in-out`;
-            notif.style.opacity = '0';
-            notif.style.transform = 'translateY(20px)';
-            container.appendChild(notif);
-
-            setTimeout(() => {
-                notif.style.opacity = '1';
-                notif.style.transform = 'translateY(0)';
-            }, 10);
-
-            setTimeout(() => {
-                notif.style.opacity = '0';
-                notif.style.transform = 'translateY(20px)';
-                setTimeout(() => notif.remove(), 300);
-            }, 3000);
+            };
         }
     </script>
 @endsection

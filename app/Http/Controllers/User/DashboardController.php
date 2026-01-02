@@ -31,9 +31,25 @@ class DashboardController extends Controller
         $latestOrders = $groupedOrders->take(3);
         $allOrders = $groupedOrders;
 
-        $favorites = Favorite::with('product')
+        $favorites = Favorite::with(['product.variants' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }])
             ->where('user_id', $user->id)
-            ->get();
+            ->get()
+            ->each(function ($fav) {
+                $product = $fav->product;
+                if (!$product) {
+                    return;
+                }
+                $availableVariant = $product->variants
+                    ->where('stok', '>', 0)
+                    ->sortBy('price')
+                    ->first();
+                $cheapestVariant = $availableVariant ?? $product->variants->first();
+                $product->display_price = $cheapestVariant->price ?? 0;
+                $product->display_stok = $cheapestVariant->stok ?? 0;
+                $product->display_variant = $cheapestVariant;
+            });
         $favoriteCount = $favorites->count();   
 
         $deliveredOrders = $orderItems->filter(function($item) {
